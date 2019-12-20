@@ -1,5 +1,5 @@
 /*
-	CÓïÑÔ¿Î³ÌÉè¼Æ Ñ§Éú³É¼¨¹ÜÀíÏµÍ³
+	Cè¯­è¨€è¯¾ç¨‹è®¾è®¡ å­¦ç”Ÿæˆç»©ç®¡ç†ç³»ç»Ÿ
 */
 #include <stdio.h>
 #include <string.h>
@@ -8,12 +8,11 @@
 #define TIME_BREAK 10
 #define TIME_BREAK_LONGER 50
 #define TIME_BREAK_SHORTER 5
-// ¿ØÖÆ³ÌĞòÊ×´ÎÔËĞĞÊ±µÄ¶¯»­ÏÔÊ¾
-#define MAX_STUDENT_NUM 100
-// ×î´óÑ§ÉúÊıÁ¿
-#define MAX_STRING_LENGTH 50
+// æ§åˆ¶ç¨‹åºé¦–æ¬¡è¿è¡Œæ—¶çš„åŠ¨ç”»æ˜¾ç¤º
+#define MAX_STUDENT_NUM 100   // æœ€å¤§å­¦ç”Ÿæ•°é‡
+#define MAX_STRING_LENGTH 256  // å­—ç¬¦ä¸²æœ€é•¿é•¿åº¦ 
 
-typedef struct _student {
+typedef struct {
 	char name[MAX_STRING_LENGTH];
 	long long int stuID;
 	int chineseScore, mathScore, englishScore;
@@ -21,185 +20,347 @@ typedef struct _student {
 	double averageScore;
 }student;
 student stu[MAX_STUDENT_NUM];
-// Ñ§ÉúĞÅÏ¢Êı×é£¬²ÉÓÃ¼ò»¯ÏßĞÔ±íĞÎÊ½
+// å­¦ç”Ÿä¿¡æ¯æ•°ç»„ï¼Œé‡‡ç”¨ç®€åŒ–çº¿æ€§è¡¨å½¢å¼
 int stuNum;
-// ÒÑÂ¼ÈëµÄÑ§Éú¸öÊı£¬Ñ§Éú´Ó0¿ªÊ¼¼ÆÊı
+// å·²å½•å…¥çš„å­¦ç”Ÿä¸ªæ•°ï¼Œå­¦ç”Ÿä»0å¼€å§‹è®¡æ•°
 
 const char* text[TEXT_MAX] = {
-	"1. Append record\n",
-	"2. List record\n",
-	"3. Delete record\n",
-	"4. Modify record\n",
-	"5. Search record\n",
-	"6. Sort in descending order by sum\n",
-	"7. Sort in ascending order by sum\n",
-	"8. Sort in descending order by num\n",
-	"9. Sort in ascending order by num\n",
-	"W. Write to a File\n",
-	"R. Read from a File\n",
-	"0. Exit\n",
-	"Please Input your choice: "
+	"1. æ·»åŠ å­¦ç”Ÿä¿¡æ¯\n",
+	"2. æ˜¾ç¤ºå…¨éƒ¨ä¿¡æ¯\n",
+	"3. åˆ é™¤ä¸€æ¡ä¿¡æ¯\n",
+	"4. ä¿®æ”¹ä¸€æ¡ä¿¡æ¯\n",
+	"5. æŸ¥è¯¢ä¸€æ¡ä¿¡æ¯\n",
+	"6. ä»¥æ€»åˆ†ä¸ºæ ‡å‡†é™åºæ’åº\n",
+	"7. ä»¥æ€»åˆ†ä¸ºæ ‡å‡†å‡åºæ’åº\n",
+	"8. ä»¥å­¦å·ä¸ºæ ‡å‡†é™åºæ’åº\n",
+	"9. ä»¥å­¦å·ä¸ºæ ‡å‡†å‡åºæ’åº\n",
+	"W. å°†å½“å‰çš„å­¦ç”Ÿä¿¡æ¯å†™å…¥åˆ°æ–‡ä»¶\n",
+	"R. ä»æ–‡ä»¶ä¸­è¯»å–å­¦ç”Ÿä¿¡æ¯\n",
+	"0. é€€å‡ºç³»ç»Ÿ\n",
+	"è¯·è¾“å…¥å¯¹åº”åŠŸèƒ½çš„èœå•åºå·: "
 };
-const char* mainText = "Management for Student's scores\n";
-// ÏÔÊ¾²Ëµ¥ÓÃµÄ×Ö·û´® 
+const char* mainText = "å­¦ç”Ÿæˆç»©ç®¡ç†ç³»ç»Ÿ\n";
+// æ˜¾ç¤ºèœå•ç”¨çš„å­—ç¬¦ä¸² 
 
-void appendRecord();								// Ôö¼ÓÒ»Ìõ¼ÇÂ¼ 
-void listRecord();									// ÏÔÊ¾ËùÓĞ¼ÇÂ¼ 
-void deleteRecord();								// É¾³ıÒ»Ìõ¼ÇÂ¼ 
-void modifyRecord();								// ĞŞ¸ÄÒ»Ìõ¼ÇÂ¼ 
-void searchRecord();								// ²éÕÒÒ»Ìõ¼ÇÂ¼ 
-void sortDesBySum();								// ÒÔ×Ü·ÖÎª¹æÔò½µĞòÅÅĞò 
-void sortAscBySum();								// ÒÔ×Ü·ÖÎª¹æÔòÉıĞòÅÅĞò 
-void sortDesByNum();								// ÒÔÑ§ºÅÎª¹æÔò½µĞòÅÅĞò 
-void sortAscByNum();								// ÒÔÑ§ºÅÎª¹æÔòÉıĞòÅÅĞò 
-void writeToFile();									// Ğ´Èëµ½ÎÄ¼ş 
-void readFromFile();								// ´ÓÎÄ¼şÖĞ¶ÁÈ¡ 
-void exitProgram();									// ÍË³ö³ÌĞò 
-void getUserInput();								// »ñÈ¡ÓÃ»§ÊäÈë 
-void slowDisplay(const char* p);					// »ºÂıÊä³öÒÔ´ïµ½¶¯»­Ğ§¹ûµÄºËĞÄ·½·¨ 
-void intervalOutput(DWORD time, const char* text);	// Êä³öÒ»ĞĞ×Ö·û´®±ãÔİÍ£Ä³Ò»Ê±¼ä 
-void slowDisplayMenu(); 							// ÒÔ¶¯»­£¨»ºÂıÊä³ö£©ĞÎÊ½´òÓ¡²Ëµ¥ 
-void displayMenu();									// Ö±½Ó´òÓ¡²Ëµ¥ 
+const char* fileIdentifierText = "SCMSDATA\n";
+
+void appendRecord();								// å¢åŠ ä¸€æ¡è®°å½• 
+void listRecord();									// æ˜¾ç¤ºæ‰€æœ‰è®°å½• 
+void deleteRecord();								// åˆ é™¤ä¸€æ¡è®°å½• 
+void modifyRecord();								// ä¿®æ”¹ä¸€æ¡è®°å½• 
+void searchRecord();								// æŸ¥æ‰¾ä¸€æ¡è®°å½• 
+void sortDesBySum();								// ä»¥æ€»åˆ†ä¸ºè§„åˆ™é™åºæ’åº 
+void sortAscBySum();								// ä»¥æ€»åˆ†ä¸ºè§„åˆ™å‡åºæ’åº 
+void sortDesByNum();								// ä»¥å­¦å·ä¸ºè§„åˆ™é™åºæ’åº 
+void sortAscByNum();								// ä»¥å­¦å·ä¸ºè§„åˆ™å‡åºæ’åº 
+void writeToFile();									// å†™å…¥åˆ°æ–‡ä»¶ 
+void readFromFile();								// ä»æ–‡ä»¶ä¸­è¯»å– 
+void exitProgram();									// é€€å‡ºç¨‹åº 
+void getUserInput();								// è·å–ç”¨æˆ·è¾“å…¥ 
+void slowDisplay(const char* p);					// ç¼“æ…¢è¾“å‡ºä»¥è¾¾åˆ°åŠ¨ç”»æ•ˆæœçš„æ ¸å¿ƒæ–¹æ³• 
+void intervalOutput(DWORD time, const char* text);	// è¾“å‡ºä¸€è¡Œå­—ç¬¦ä¸²ä¾¿æš‚åœæŸä¸€æ—¶é—´ 
+void slowDisplayMenu(); 							// ä»¥åŠ¨ç”»ï¼ˆç¼“æ…¢è¾“å‡ºï¼‰å½¢å¼æ‰“å°èœå• 
+void displayMenu();									// ç›´æ¥æ‰“å°èœå• 
 
 int main() {
-	slowDisplayMenu();								// µÚÒ»´ÎÏÔÊ¾ÒÔ¶¯»­ĞÎÊ½ 
+	slowDisplayMenu();								// ç¬¬ä¸€æ¬¡æ˜¾ç¤ºä»¥åŠ¨ç”»å½¢å¼ 
 	while (1) {
-		getUserInput();								// »ñÈ¡²¢ÅĞ¶ÏÓÃ»§µÄÊäÈë 
-		system("cls");								// ÇåÆÁ²Ù×÷ 
-		displayMenu();								// ´ËºóµÄÏÔÊ¾ÎªÖ±½ÓÏÔÊ¾ 
+		getUserInput();								// è·å–å¹¶åˆ¤æ–­ç”¨æˆ·çš„è¾“å…¥ 
+		system("cls");								// æ¸…å±æ“ä½œ 
+		displayMenu();								// æ­¤åçš„æ˜¾ç¤ºä¸ºç›´æ¥æ˜¾ç¤º 
 	}
 	return 0;
 }
 
 void appendRecord() {
-	int n;
-	student newStu;
-	printf("ÇëÊäÈëÒªÌí¼ÓµÄÑ§ÉúĞÅÏ¢ÊıÁ¿:");
-	scanf("%d", &n);
-	for (int i = 1; i <= n; i++) {
-		printf("ÇëÊäÈëĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄĞÕÃû:", i, stuNum + 1);
-		scanf("%s", newStu.name);
-		printf("ÇëÊäÈëĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄÑ§ºÅ:", i, stuNum + 1);
-		scanf("%lld", &newStu.stuID);
-		printf("ÇëÊäÈëĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄÓïÎÄ³É¼¨:", i, stuNum + 1);
-		scanf("%d", &newStu.chineseScore);
-		printf("ÇëÊäÈëĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄÊıÑ§³É¼¨:", i, stuNum + 1);
-		scanf("%d", &newStu.mathScore);
-		printf("ÇëÊäÈëĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄÓ¢Óï³É¼¨:", i, stuNum + 1);
-		scanf("%d", &newStu.englishScore);
-		stu[stuNum++] = newStu;
-		printf("ĞÂÌí¼ÓµÚ%d¸öÑ§Éú(×ÜµÚ%d¸ö)µÄĞÅÏ¢Ìí¼Ó³É¹¦:\n", i, stuNum + 1);
+	if (stuNum == MAX_STUDENT_NUM) {
+		printf("å­¦ç”Ÿæ•°é‡å·²è¾¾æœ€å¤§é™åˆ¶ï¼Œæ— æ³•æ·»åŠ æ–°ä¿¡æ¯ï¼\n");
 	}
-	printf("ĞÅÏ¢Ìí¼ÓÍê±Ï\n");
-	getchar();
-	Sleep(1000);
+	else {
+		int n;
+		student newStu;
+		printf("è¯·è¾“å…¥è¦æ·»åŠ çš„å­¦ç”Ÿä¿¡æ¯æ•°é‡:");
+		scanf("%d", &n);
+		for (int i = 1; i <= n; i++) {
+			printf("è¯·è¾“å…¥æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„å§“å:", i, stuNum + 1);
+			scanf("%s", newStu.name);
+			printf("è¯·è¾“å…¥æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„å­¦å·:", i, stuNum + 1);
+			scanf("%lld", &newStu.stuID);
+			printf("è¯·è¾“å…¥æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„è¯­æ–‡æˆç»©:", i, stuNum + 1);
+			scanf("%d", &newStu.chineseScore);
+			printf("è¯·è¾“å…¥æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„æ•°å­¦æˆç»©:", i, stuNum + 1);
+			scanf("%d", &newStu.mathScore);
+			printf("è¯·è¾“å…¥æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„è‹±è¯­æˆç»©:", i, stuNum + 1);
+			scanf("%d", &newStu.englishScore);
+			stu[stuNum++] = newStu;
+			printf("æ–°æ·»åŠ ç¬¬%dä¸ªå­¦ç”Ÿ(æ€»ç¬¬%dä¸ª)çš„ä¿¡æ¯æ·»åŠ æˆåŠŸ\n", i, stuNum);
+		}
+		printf("ä¿¡æ¯æ·»åŠ å®Œæ¯•\n");
+		getchar();
+	}
+	system("pause");
 }
 
 void listRecord() {
-	printf("%dÌõ¼ÇÂ¼\n", stuNum);
-	for (int i = 0; i < stuNum; i++)
-		printf("Ñ§ºÅ%lld ÓïÎÄ%d ÊıÑ§%d Ó¢Óï%d\n", stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore);
+	printf("æ˜¾ç¤ºæ¨¡å—å¼€å§‹......\nä¸€å…±æœ‰%dæ¡è®°å½•ï¼Œè¯¦ç»†ä¿¡æ¯å¦‚ä¸‹:\n",stuNum);
+	printf("å­¦å·\tå§“å\tè¯­æ–‡æˆç»©\tæ•°å­¦æˆç»©\tè‹±è¯­æˆç»©\tæ€»æˆç»©\tå¹³å‡æˆç»©\n\n");
+	for (int i = 0; i < stuNum; i++) {
+		stu[i].sumScore = stu[i].chineseScore + stu[i].mathScore + stu[i].englishScore;
+		stu[i].averageScore = stu[i].sumScore / 3;
+		printf("%5lld\t%6s\t%4d\t%4d\t%4d\t%4d\t%.2lf\n",stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+	}
 	system("pause");
 }
 
 void deleteRecord() {
-	printf("ÇëÊäÈëÒªÉ¾³ıµÄÍ¬Ñ§µÄÑ§ºÅ:");
+	printf("è¯·è¾“å…¥è¦åˆ é™¤çš„åŒå­¦çš„å­¦å·:");
 	long long int delID;
 	scanf("%lld", &delID);
 	int j;
-	int flag = 0; // ÅĞ¶ÏÊÇ·ñÕÒµ½¸ÃÑ§Éú
-	for (j = 0; j < stuNum; j++)			//Ñ°ÕÒµ½¸ÃÑ§ºÅµÄÍ¬Ñ§ 
+	int flag = 0; // åˆ¤æ–­æ˜¯å¦æ‰¾åˆ°è¯¥å­¦ç”Ÿ
+	for (j = 0; j < stuNum; j++)			//å¯»æ‰¾åˆ°è¯¥å­¦å·çš„åŒå­¦ 
 		if (stu[j].stuID == delID) {
 			flag = 1;
 			for (j; j < stuNum; j++)
-				stu[j] = stu[j + 1];	//ÓÃºóÀ´µÄÍ¬Ñ§ĞÅÏ¢¸²¸Ç¸ÃÍ¬Ñ§µÄĞÅÏ¢ 
+				stu[j] = stu[j + 1];	//ç”¨åæ¥çš„åŒå­¦ä¿¡æ¯è¦†ç›–è¯¥åŒå­¦çš„ä¿¡æ¯ 
 			stuNum--;
 			break;
 		}
 	if (flag == 0)
-		printf("Ã»ÓĞÕÒµ½Ñ§ºÅÎª:%dµÄÑ§Éú\n", delID);		//ÈôÃ»ÕÒµ½Ôò±¨´í 
+		printf("æ²¡æœ‰æ‰¾åˆ°å­¦å·ä¸º:%lldçš„å­¦ç”Ÿã€‚\n", delID);		//è‹¥æ²¡æ‰¾åˆ°åˆ™æŠ¥é”™ 
 	else
-		printf("Ñ§ºÅÎª%dµÄÑ§ÉúĞÅÏ¢ÒÑÉ¾³ı¡£\n", delID);
+		printf("å­¦å·ä¸º%lldçš„å­¦ç”Ÿä¿¡æ¯å·²åˆ é™¤ã€‚\n", delID);
+	getchar();
 	system("pause");
 }
 
 void modifyRecord() {
-	printf("ÇëÊäÈëÒªĞŞ¸ÄĞÅÏ¢µÄÍ¬Ñ§µÄÑ§ºÅ:");
+	printf("è¯·è¾“å…¥è¦ä¿®æ”¹ä¿¡æ¯çš„åŒå­¦çš„å­¦å·:");
 	long long int modiID;
 	scanf("%lld", &modiID);
 	int choice, Chinese, Math, English;
 	int j;
-	for (j = 0; j < stuNum; j++)			//Ñ°ÕÒµ½¸ÃÑ§ºÅµÄÍ¬Ñ§ 
+	int flag = 0;
+	for (j = 0; j < stuNum; j++) {				//å¯»æ‰¾åˆ°è¯¥å­¦å·çš„åŒå­¦ 
 		if (stu[j].stuID == modiID) {
-			printf("ÕÒµ½Ñ§ºÅÎª:%lldµÄÑ§Éú\n", stu[j].stuID);
+			flag = 1;
 			break;
 		}
-	if (j == stuNum)
-		printf("Ã»ÓĞÕÒµ½Ñ§ºÅÎª:%lldµÄÑ§Éú\n", modiID);
-	printf("ÇëÑ¡ÔñÄúÒªĞŞ¸ÄµÄÏîÄ¿:\n");
-	printf("1¡¢ĞŞ¸ÄÓïÎÄ³É¼¨\n");
-	printf("2¡¢ĞŞ¸ÄÊıÑ§³É¼¨\n");
-	printf("3¡¢ĞŞ¸ÄÓ¢Óï³É¼¨\n");
-	printf("4¡¢ÍË³öĞŞ¸Ä\n");
-	scanf("%d", &choice);
-	switch (choice) {
-	case 1:
-		printf("ÇëÊäÈëÒªĞŞ¸ÄµÄÓïÎÄ³É¼¨:\n");
-		scanf("%d", &Chinese);
-		stu[j].chineseScore = Chinese;
-		printf("ĞŞ¸Ä³É¹¦£¡");
-		break;
-	case 2:
-		printf("ÇëÊäÈëÒªĞŞ¸ÄµÄÊıÑ§³É¼¨:\n");
-		scanf("%d", &Math);
-		stu[j].mathScore = Math;
-		printf("ĞŞ¸Ä³É¹¦£¡");
-		break;
-	case 3:
-		printf("ÇëÊäÈëÒªĞŞ¸ÄµÄÓ¢Óï³É¼¨:\n");
-		scanf("%d", &English);
-		stu[j].englishScore = English;
-		printf("ĞŞ¸Ä³É¹¦£¡");
-		break;
-	case 4:
-		break;
-	default:
-		printf("ÊäÈëÓĞÎó£¬·µ»ØÖ÷²Ëµ¥");
-		break;
 	}
+	if (flag == 0)
+		printf("æ²¡æœ‰æ‰¾åˆ°å­¦å·ä¸º %lld çš„å­¦ç”Ÿã€‚\n", modiID);
+	else {
+		printf("æ‰¾åˆ°å­¦å·ä¸º %lld çš„å­¦ç”Ÿã€‚\n", stu[j].stuID);
+		printf("è¯·é€‰æ‹©æ‚¨è¦ä¿®æ”¹çš„é¡¹ç›®:\n");
+		printf("1ã€ä¿®æ”¹è¯­æ–‡æˆç»©\n");
+		printf("2ã€ä¿®æ”¹æ•°å­¦æˆç»©\n");
+		printf("3ã€ä¿®æ”¹è‹±è¯­æˆç»©\n");
+		printf("4ã€é€€å‡ºä¿®æ”¹\n");
+		scanf("%d", &choice);
+		switch (choice) {
+		case 1:
+			printf("è¯·è¾“å…¥è¦ä¿®æ”¹çš„è¯­æ–‡æˆç»©:\n");
+			scanf("%d", &Chinese);
+			stu[j].chineseScore = Chinese;
+			printf("ä¿®æ”¹æˆåŠŸï¼");
+			break;
+		case 2:
+			printf("è¯·è¾“å…¥è¦ä¿®æ”¹çš„æ•°å­¦æˆç»©:\n");
+			scanf("%d", &Math);
+			stu[j].mathScore = Math;
+			printf("ä¿®æ”¹æˆåŠŸï¼");
+			break;
+		case 3:
+			printf("è¯·è¾“å…¥è¦ä¿®æ”¹çš„è‹±è¯­æˆç»©:\n");
+			scanf("%d", &English);
+			stu[j].englishScore = English;
+			printf("ä¿®æ”¹æˆåŠŸï¼");
+			break;
+		case 4:
+			break;
+		default:
+			printf("è¾“å…¥æœ‰è¯¯ï¼Œè¿”å›ä¸»èœå•");
+			break;
+		}
+	}
+	getchar();
 	system("pause");
 }
 
 void searchRecord() {
-
+	int k, i, a = 0; char m[MAX_STRING_LENGTH];
+	long long int b;
+	printf("æŸ¥æ‰¾æ¨¡å—å¼€å§‹.....\n\n");
+	printf("     ****************************************\n");
+	printf("     *      1.å§“å           2.å­¦å·         *\n\n");     //æä¾›é€‰æ‹©èœå•
+	printf("è¯·è¾“å…¥æŸ¥è¯¢é€‰é¡¹ï¼š");
+	scanf("%d", &k);           //è®°å½•ç”¨æˆ·è¾“å…¥é€‰é¡¹
+	if (k == 1) {              //åˆ¤æ–­é€‰é¡¹
+		printf("è¯·è¾“å…¥å§“åï¼š");
+		scanf("%s", &m);
+		for (i = 0; i < stuNum; i++)
+			if (m == stu[i].name)         //é€æ¡å¯¹æ¯”å§“åå­—ç¬¦
+				a = i;                       //è®°å½•å­¦ç”Ÿæ•°ç»„ä¸‹æ ‡
+	}
+	else if (k == 2) {            //åˆ¤æ–­é€‰é¡¹
+		printf("è¯·è¾“å…¥å­¦å·ï¼š");
+		scanf("%lld", &b);
+		for (i = 0; i < stuNum; i++)
+			if (b == stu[i].stuID)              //å¯¹æ¯”å­¦ç”Ÿå­¦å·
+				a = i;
+	}
+	else {
+		printf("è¾“å…¥æœ‰è¯¯ï¼Œè¿”å›ä¸»èœå•");
+		system("pause");
+		return;
+	}
+	if (a == 0)
+		printf("æ²¡æœ‰æ‰¾åˆ°ï¼ï¼ï¼\n");
+	else {
+		printf(" å­¦å·\tå§“å\tè¯­æ–‡æˆç»©\tæ•°å­¦\tè‹±è¯­æˆç»©\tæ€»æˆç»©\tå¹³å‡æˆç»©\n");
+		printf("%5lld %6s %4d %4d %4d %4d %.2lf\n",stu[a].stuID, stu[a].name, stu[a].chineseScore, stu[a].mathScore, stu[a].chineseScore, stu[a].sumScore, stu[a].averageScore);
+	}
+	getchar();
+	system("pause");
 }
 
 void sortDesBySum() {
-
+	int i, j, k;
+	for (i = 0; i < stuNum - 1; i++) {
+		k = i;
+		for (j = i + 1; j < stuNum; j++)
+			if (stu[j].sumScore > stu[k].sumScore)
+				k = j;
+		if (i != k) {
+			student e = stu[i];
+			stu[i] = stu[k];
+			stu[k] = e;
+		}
+	}
+	printf("æ€»åˆ†é™åºæ’åºå®Œæ¯•ï¼Œ%dæ¡è®°å½•\n", stuNum);
+	for (int i = 0; i < stuNum; i++)
+		printf("ç¬¬%då\tå­¦å·%lld\tè¯­æ–‡%d\tæ•°å­¦%d\tè‹±è¯­%d\tæ€»åˆ†%d\n", i + 1, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	system("pause");
 }
 
 void sortAscBySum() {
-
+	int i, j, k;
+	for (i = 0; i < stuNum - 1; i++) {
+		k = i;
+		for (j = i + 1; j < stuNum; j++)
+			if (stu[j].sumScore < stu[k].sumScore)  
+				k = j;
+		if (i != k) {
+			student e = stu[i];
+			stu[i] = stu[k];
+			stu[k] = e;
+		}
+	}
+	printf("æ€»åˆ†å‡åºæ’åºå®Œæ¯•ï¼Œ%dæ¡è®°å½•\n", stuNum);
+	for (int i = 0; i < stuNum; i++)
+		printf("ç¬¬%då\tå­¦å·%lld\tè¯­æ–‡%d\tæ•°å­¦%d\tè‹±è¯­%d\tæ€»åˆ†%d\n", stuNum - i, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	system("pause");
 }
 
 void sortDesByNum() {
-
+	int i, j, k;
+	for (i = 0; i < stuNum - 1; i++) {
+		k = i;
+		for (j = i + 1; j < stuNum; j++)
+			if (stu[j].stuID < stu[k].stuID)
+				k = j;
+		if (i != k) {
+			student e = stu[i];
+			stu[i] = stu[k];
+			stu[k] = e;
+		}
+	}
+	printf("å­¦å·é™åºæ’åºå®Œæ¯•ï¼Œ%dæ¡è®°å½•\n", stuNum);
+	for (int i = 0; i < stuNum; i++)
+		printf("å­¦å·%lld\tè¯­æ–‡%d\tæ•°å­¦%d\tè‹±è¯­%d\tæ€»åˆ†%d\n", stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	system("pause");
 }
 
 void sortAscByNum() {
-
+	int i, j, k;
+	for (i = 0; i < stuNum - 1; i++) {
+		k = i;
+		for (j = i + 1; j < stuNum; j++)
+			if (stu[j].stuID > stu[k].stuID)
+				k = j;
+		if (i != k) {
+			student e = stu[i];
+			stu[i] = stu[k];
+			stu[k] = e;
+		}
+	}
+	printf("å­¦å·å‡åºæ’åºå®Œæ¯•ï¼Œ%dæ¡è®°å½•\n", stuNum);
+	for (int i = 0; i < stuNum; i++)
+		printf("å­¦å·%lld\tè¯­æ–‡%d\tæ•°å­¦%d\tè‹±è¯­%d\tæ€»åˆ†%d\n", stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	system("pause");
 }
 
 void writeToFile() {
-
+	FILE* file;
+	char rout[MAX_STRING_LENGTH] = "D:\\test\\";
+	char fileName[MAX_STRING_LENGTH];
+	int isPermitted = 1;
+	printf("è¯·è¾“å…¥è¦åˆ›å»ºçš„æ–‡ä»¶åï¼š");
+	scanf("%s", fileName);
+	getchar();
+	file = fopen(strcat(rout, fileName), "w");
+	if (!feof(file)) {
+		printf("æ³¨æ„ï¼š%sæ–‡ä»¶å·²å­˜åœ¨ï¼Œè¦è¦†ç›–å—ï¼Ÿ(é”®å…¥yå…è®¸è¦†ç›–æ–‡ä»¶ï¼Œé”®å…¥å…¶ä»–åˆ™å–æ¶ˆæ‰“å¼€æ–‡ä»¶):", rout);
+		char choice;
+		scanf("%c", &choice);
+		getchar();
+		if (choice != 'y')
+			isPermitted = 0;
+	}
+	if (isPermitted) {
+		fprintf(file, fileIdentifierText);
+		for (int i = 0; i < stuNum; i++) {
+			fprintf(file, "%s %lld %d %d %d %d %.2lf\n", stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore, stu[i].averageScore);
+		}
+		printf("æ–‡ä»¶å·²ä¿å­˜åœ¨%s\n", rout);
+	}
+	else {
+		printf("ç”¨æˆ·å–æ¶ˆäº†æ‰“å¼€æ–‡ä»¶æ“ä½œã€‚\n");
+	}
+	fclose(file);
+	system("pause");
 }
 
 void readFromFile() {
-
+	FILE* file;
+	char rout[MAX_STRING_LENGTH] = "D:\\test\\";
+	char fileName[MAX_STRING_LENGTH];
+	printf("è¯·è¾“å…¥è¦è¯»å…¥çš„æ–‡ä»¶åï¼š");
+	scanf("%s", fileName);
+	file = fopen(strcat(rout, fileName), "r");
+	if (file == NULL) {
+		printf("æ‰¾ä¸åˆ°%sæ–‡ä»¶ï¼", rout);
+	}
+	else {
+		char isLegal[MAX_STRING_LENGTH];
+		fscanf(file, "%s", isLegal);
+		if (strcmp(isLegal, fileIdentifierText) == 0) {
+			printf("æ‰“å¼€å¤±è´¥ï¼Œæ–‡ä»¶æ ¡éªŒé”™è¯¯ï¼Œè¯·æ£€æŸ¥æ˜¯å¦ä¸ºåˆæ³•çš„ç³»ç»Ÿè¾“å…¥æ–‡ä»¶ï¼\n%s\n%s",isLegal,fileIdentifierText);
+		}
+		else {
+			student newStud;
+			while (fscanf(file, "%s %lld %d %d %d %d %lf", newStud.name, &newStud.stuID, &newStud.chineseScore, &newStud.mathScore, &newStud.englishScore, &newStud.sumScore, &newStud.averageScore) == 7) {
+				stu[stuNum++] = newStud;
+			}
+			printf("å·²ä»%sé‡Œå¯¼å…¥å­¦ç”Ÿä¿¡æ¯åˆ°ç³»ç»Ÿ\n", rout);
+		}
+	}
+	getchar();
+	system("pause");
 }
 
 void exitProgram() {
-	printf("Thank you for using this system, please press any key to exit...\n");
+	printf("æ„Ÿè°¢ä½¿ç”¨æœ¬ç®¡ç†ç³»ç»Ÿï¼Œè¯·æŒ‰ä»»æ„é”®é€€å‡º...\n");
 	system("pause");
 	exit(0);
 }
@@ -208,8 +369,8 @@ void getUserInput() {
 	char ch;
 	scanf("%c", &ch);
 	getchar();
-	while ((ch < '0' || ch > '9') && ch != 'W' && ch != 'R') {
-		printf("\nInput error, please input your choice again: ");
+	while ((ch < '0' || ch > '9') && ch != 'W' && ch != 'R' && ch!= 'w' && ch!= 'r') {
+		printf("è¾“å…¥æœ‰è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥: ");
 		scanf("%c", &ch);
 		getchar();
 	}
@@ -244,7 +405,13 @@ void getUserInput() {
 	case 'W':
 		writeToFile();
 		break;
+	case 'w':
+		writeToFile();
+		break;
 	case 'R':
+		readFromFile();
+		break;
+	case 'r':
 		readFromFile();
 		break;
 	case '0':
