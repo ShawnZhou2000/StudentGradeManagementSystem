@@ -5,16 +5,17 @@
 #include <string.h>
 #include <windows.h>
 #define TEXT_MAX 13
-#define TIME_BREAK 100
-#define TIME_BREAK_LONGER 500
-#define TIME_BREAK_SHORTER 50
+#define TIME_BREAK 10
+#define TIME_BREAK_LONGER 50
+#define TIME_BREAK_SHORTER 5
 // 控制程序首次运行时的动画显示
 #define MAX_STUDENT_NUM 100
 // 最大学生数量
+#define MAX_STRING_LENGTH 50
 
 typedef struct _student {
-	char* name;
-	char* stuID;
+	char name[MAX_STRING_LENGTH];
+	long long int stuID;
 	int chineseScore, mathScore, englishScore;
 	int sumScore;
 	double averageScore;
@@ -69,67 +70,72 @@ int main() {
 	}
 	return 0;
 }
-student newStu;
-char* newname;
-char* newID;
+
 void appendRecord() {
 	int n;
+	student newStu;
 	printf("请输入要添加的学生信息数量:");
 	scanf("%d", &n);
 	for (int i = 1; i <= n; i++) {
-		printf("请输入新添加第%d个学生(总第%d个)的姓名:", i, stuNum);
-		scanf("%s", newname);
-		strcpy(newStu.name, newname);
-		printf("请输入新添加第%d个学生(总第%d个)的学号:", i, stuNum);
-		scanf("%s", newID);
-		strcpy(newStu.stuID, newID);
-		printf("请输入新添加第%d个学生(总第%d个)的语文成绩:", i, stuNum);
+		printf("请输入新添加第%d个学生(总第%d个)的姓名:", i, stuNum + 1);
+		scanf("%s", newStu.name);
+		printf("请输入新添加第%d个学生(总第%d个)的学号:", i, stuNum + 1);
+		scanf("%lld", &newStu.stuID);
+		printf("请输入新添加第%d个学生(总第%d个)的语文成绩:", i, stuNum + 1);
 		scanf("%d", &newStu.chineseScore);
-		printf("请输入新添加第%d个学生(总第%d个)的数学成绩:", i, stuNum);
+		printf("请输入新添加第%d个学生(总第%d个)的数学成绩:", i, stuNum + 1);
 		scanf("%d", &newStu.mathScore);
-		printf("请输入新添加第%d个学生(总第%d个)的英语成绩:", i, stuNum);
+		printf("请输入新添加第%d个学生(总第%d个)的英语成绩:", i, stuNum + 1);
 		scanf("%d", &newStu.englishScore);
 		stu[stuNum++] = newStu;
-		printf("新添加第%d个学生(总第%d个)的信息添加成功:\n", i, stuNum);
+		printf("新添加第%d个学生(总第%d个)的信息添加成功:\n", i, stuNum + 1);
 	}
 	printf("信息添加完毕\n");
+	getchar();
 	Sleep(1000);
 }
 
-void listRecord()
-{
-
+void listRecord() {
+	printf("%d条记录\n", stuNum);
+	for (int i = 0; i < stuNum; i++)
+		printf("学号%lld 语文%d 数学%d 英语%d\n", stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore);
+	system("pause");
 }
 
 void deleteRecord() {
 	printf("请输入要删除的同学的学号:");
-	char* delID = "";
-	scanf("%s", delID);
+	long long int delID;
+	scanf("%lld", &delID);
 	int j;
+	int flag = 0; // 判断是否找到该学生
 	for (j = 0; j < stuNum; j++)			//寻找到该学号的同学 
 		if (stu[j].stuID == delID) {
+			flag = 1;
 			for (j; j < stuNum; j++)
 				stu[j] = stu[j + 1];	//用后来的同学信息覆盖该同学的信息 
+			stuNum--;
 			break;
 		}
-	if (j == stuNum)
-		printf("没有找到学号为:%s的学生\n", delID);		//若没找到则报错 
-	Sleep(1000);
+	if (flag == 0)
+		printf("没有找到学号为:%d的学生\n", delID);		//若没找到则报错 
+	else
+		printf("学号为%d的学生信息已删除。\n", delID);
+	system("pause");
 }
 
 void modifyRecord() {
 	printf("请输入要修改信息的同学的学号:");
-	char* modiID = "";
-	scanf("%s", modiID);
+	long long int modiID;
+	scanf("%lld", &modiID);
 	int choice, Chinese, Math, English;
 	int j;
 	for (j = 0; j < stuNum; j++)			//寻找到该学号的同学 
 		if (stu[j].stuID == modiID) {
-			printf("找到学号为:%s的学生\n", stu[j].stuID);
+			printf("找到学号为:%lld的学生\n", stu[j].stuID);
 			break;
 		}
 	if (j == stuNum)
-		printf("没有找到学号为:%s的学生\n", modiID);
+		printf("没有找到学号为:%lld的学生\n", modiID);
 	printf("请选择您要修改的项目:\n");
 	printf("1、修改语文成绩\n");
 	printf("2、修改数学成绩\n");
@@ -161,7 +167,7 @@ void modifyRecord() {
 		printf("输入有误，返回主菜单");
 		break;
 	}
-	Sleep(1000);
+	system("pause");
 }
 
 void searchRecord() {
