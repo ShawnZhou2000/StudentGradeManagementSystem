@@ -132,6 +132,8 @@ void appendRecord() {
 				}
 				stu[stuNum++] = newStu;
 				printf("\t\t\t\t新添加第%d个学生(总第%d个)的信息添加成功\n", i, stuNum);
+				stu[i].sumScore = stu[i].chineseScore + stu[i].mathScore + stu[i].englishScore;
+				stu[i].averageScore = stu[i].sumScore / 3;
 			}
 			printf("\t\t\t\t\t信息添加完毕\n");
 			
@@ -147,8 +149,6 @@ void listRecord() {
 	printf("\n\t\t\t\t\t  一共有%d条记录，详细信息如下:\n\n",stuNum);
 	printf("\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
 	for (int i = 0; i < stuNum; i++) {
-		stu[i].sumScore = stu[i].chineseScore + stu[i].mathScore + stu[i].englishScore;
-		stu[i].averageScore = stu[i].sumScore / 3;
 		printf("\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n",stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
 	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
@@ -205,22 +205,23 @@ void modifyRecord() {
 		printf("\t\t\t\t2、修改数学成绩\n");
 		printf("\t\t\t\t3、修改英语成绩\n");
 		printf("\t\t\t\t4、退出修改\n");
+		printf("\t\t\t\t");
 		scanf("%d", &choice);
 		switch (choice) {
 		case 1:
-			printf("\t\t\t\t请输入要修改的语文成绩:\n");
+			printf("\t\t\t\t请输入要修改的语文成绩:");
 			scanf("%d", &Chinese);
 			stu[j].chineseScore = Chinese;
 			printf("\t\t\t\t修改成功！");
 			break;
 		case 2:
-			printf("\t\t\t\t请输入要修改的数学成绩:\n");
+			printf("\t\t\t\t请输入要修改的数学成绩:");
 			scanf("%d", &Math);
 			stu[j].mathScore = Math;
 			printf("\t\t\t\t修改成功！");
 			break;
 		case 3:
-			printf("\t\t\t\t请输入要修改的英语成绩:\n");
+			printf("\t\t\t\t请输入要修改的英语成绩:");
 			scanf("%d", &English);
 			stu[j].englishScore = English;
 			printf("\t\t\t\t修改成功！");
@@ -293,8 +294,10 @@ void sortDesBySum() {
 		}
 	}
 	printf("\n\t\t\t\t\t\t总分降序排序完毕，%d条记录\n\n", stuNum);
-	for (int i = 0; i < stuNum; i++)
-		printf("\t\t    第%d名\t姓名 %s\t学号 %lld\t语文 %d\t数学 %d\t英语 %d\t总分 %d\n", i + 1, stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	printf("    \t\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
+	for (int i = 0; i < stuNum; i++) {
+		printf("    第%d名\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", i + 1, stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
 }
@@ -315,9 +318,11 @@ void sortAscBySum() {
 			stu[k] = e;
 		}
 	}
-	printf("\n\t\t\t\t\t\t总分升序排序完毕，%d条记录\n", stuNum);
-	for (int i = stuNum - 1; i >= 0; i--)
-		printf("\t\t    第%d名\t姓名 %s\t学号 %lld\t语文 %d\t数学 %d\t英语 %d\t总分 %d\n", i + 1, stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	printf("\n\t\t\t\t\t\t总分升序排序完毕，%d条记录\n\n", stuNum);
+	printf("    \t\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
+	for (int i = stuNum - 1; i >= 0; i--) {
+		printf("    第%d名\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", i + 1, stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
 }
@@ -339,8 +344,10 @@ void sortDesByNum() {
 		}
 	}
 	printf("\n\t\t\t\t\t\t学号降序排序完毕，%d条记录\n\n", stuNum);
-	for (int i = stuNum - 1; i >= 0; i--)
-		printf("\t\t    %d\t姓名 %s\t学号 %lld\t语文 %d\t数学 %d\t英语 %d\t总分 %d\n", i + 1,  stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	printf("    \t\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
+	for (int i = 0; i < stuNum; i++) {
+		printf("      %d  \t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", i + 1, stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
 }
@@ -362,8 +369,10 @@ void sortAscByNum() {
 		}
 	}
 	printf("\n\t\t\t\t\t\t学号升序排序完毕，%d条记录\n\n", stuNum);
-	for (int i = 0; i < stuNum; i++)
-		printf("\t\t    %d\t姓名 %s\t学号 %lld\t语文 %d\t数学 %d\t英语 %d\t总分 %d\n", i + 1, stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore);
+	printf("    \t\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
+	for (int i = stuNum - 1; i >= 0; i--) {
+		printf("      %d  \t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", i + 1, stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
 }
@@ -395,7 +404,7 @@ void writeToFile() {
 	if (isPermitted) {
 		fprintf(file, fileIdentifierText);
 		for (int i = 0; i < stuNum; i++) {
-			fprintf(file, "%s %lld %d %d %d %d %.2lf\n", stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore, stu[i].averageScore);
+			fprintf(file, "%s %lld %d %d %d\n", stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore);
 		}
 		printf("\t\t\t\t文件已保存在%s\n", rout);
 	}
@@ -433,7 +442,9 @@ void readFromFile() {
 		else {
 			stuNum = 0;
 			student newStud;
-			while (fscanf(file, "%s %lld %d %d %d %d %lf", newStud.name, &newStud.stuID, &newStud.chineseScore, &newStud.mathScore, &newStud.englishScore, &newStud.sumScore, &newStud.averageScore) == 7) {
+			while (fscanf(file, "%s %lld %d %d %d", newStud.name, &newStud.stuID, &newStud.chineseScore, &newStud.mathScore, &newStud.englishScore) == 5) {
+				newStud.sumScore = newStud.chineseScore + newStud.mathScore + newStud.englishScore;
+				newStud.averageScore = newStud.sumScore / 3;
 				stu[stuNum++] = newStud;
 			}
 			printf("\t\t\t\t已从%s里导入学生信息到系统\n", rout);
