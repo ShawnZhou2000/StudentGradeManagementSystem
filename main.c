@@ -50,7 +50,7 @@ const char* text[TEXT_MAX] = {					// 用于显示菜单的字符串数组
 	"\t\t\t\t\t\t请输入对应的菜单序号: "
 };
 
-const char* fileIdentifierText = "SCMSDATA\n";		// 系统用文件标识符
+const char* fileIdentifierText = "SCMSDATA";		// 系统用文件标识符
 
 void appendRecord();								// 增加一条记录 
 void listRecord();									// 显示所有记录 
@@ -130,14 +130,15 @@ void appendRecord() {
 					printf("\t\t\t\t英语成绩输入不合法（不在0到100分之间），已将该科成绩置为0。\n");
 					newStu.englishScore = 0;
 				}
-				stu[stuNum++] = newStu;
+				stu[stuNum] = newStu;
 				printf("\t\t\t\t新添加第%d个学生(总第%d个)的信息添加成功\n", i, stuNum);
-				stu[i].sumScore = stu[i].chineseScore + stu[i].mathScore + stu[i].englishScore;
-				stu[i].averageScore = stu[i].sumScore / 3;
+				stu[stuNum].sumScore = stu[stuNum].chineseScore + stu[stuNum].mathScore + stu[stuNum].englishScore;
+				stu[stuNum].averageScore = stu[stuNum].sumScore / 3;
+				stuNum++;
 			}
 			printf("\t\t\t\t\t信息添加完毕\n");
-			
-		}	
+
+		}
 	}
 	system("pause");					// 等待用户输入任意键再继续运行程序，下不再赘述
 }
@@ -146,10 +147,10 @@ void listRecord() {
 	system("cls");
 	printf("\t\t\t*************************************************************************\n");
 	printf("\n\n\t\t\t\t\t\t2.  显示全部信息\t\t\t\t\n");
-	printf("\n\t\t\t\t\t  一共有%d条记录，详细信息如下:\n\n",stuNum);
+	printf("\n\t\t\t\t\t  一共有%d条记录，详细信息如下:\n\n", stuNum);
 	printf("\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
 	for (int i = 0; i < stuNum; i++) {
-		printf("\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n",stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].chineseScore, stu[i].sumScore, stu[i].averageScore);
+		printf("\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", stu[i].stuID, stu[i].name, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore, stu[i].sumScore, stu[i].averageScore);
 	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
@@ -232,6 +233,8 @@ void modifyRecord() {
 			printf("\t\t\t\t输入有误，返回主菜单");
 			break;
 		}
+		stu[j].sumScore = stu[j].chineseScore + stu[j].mathScore + stu[j].englishScore;
+		stu[j].averageScore = stu[j].sumScore / 3;
 	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
@@ -271,7 +274,7 @@ void searchRecord() {
 		printf("\t\t\t\t按此查询条件没有找到对应的同学。\n");
 	else {
 		printf("\n\t学号\t  \t  姓名  \t语文成绩\t数学成绩\t英语成绩\t总成绩\t      平均成绩\n\n");
-		printf("\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n",stu[a].stuID, stu[a].name, stu[a].chineseScore, stu[a].mathScore, stu[a].chineseScore, stu[a].sumScore, stu[a].averageScore);
+		printf("\t%5lld\t%6s\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%.2lf\n", stu[a].stuID, stu[a].name, stu[a].chineseScore, stu[a].mathScore, stu[a].chineseScore, stu[a].sumScore, stu[a].averageScore);
 	}
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
@@ -310,7 +313,7 @@ void sortAscBySum() {
 	for (i = 0; i < stuNum - 1; i++) {			// 选择排序主要过程
 		k = i;
 		for (j = i + 1; j < stuNum; j++)
-			if (stu[j].sumScore > stu[k].sumScore)  
+			if (stu[j].sumScore > stu[k].sumScore)
 				k = j;
 		if (i != k) {
 			student e = stu[i];
@@ -388,13 +391,13 @@ void writeToFile() {
 	printf("\n\t\t\t\t请输入要创建的文件名：");
 	scanf("%s", fileName);
 	file = fopen(strcat(rout, fileName), "w");
-	printf("\n\t\t\t\t注意：向%s文件中写入可能会覆盖原有数据，确定这么做吗？\n", rout);  
+	printf("\n\t\t\t\t注意：向%s文件中写入可能会覆盖原有数据，确定这么做吗？\n", rout);
 	// 追加确认，保证数据的安全性
 	printf("\t\t\t\t(键入y允许打开文件，键入其他则取消打开文件):");
 	char choice;
 	while (1) {
 		scanf("%c", &choice);
-		if (choice== '\n')
+		if (choice == '\n')
 			continue;
 		else
 			break;
@@ -436,8 +439,8 @@ void readFromFile() {
 		使用本系统输出的文件头部自带校验码，可以在一定程度上保证通过文件输入的合法性。
 		*/
 		fscanf(file, "%s", isLegal);
-		if (strcmp(isLegal, fileIdentifierText) == 0) {
-			printf("\t\t\t打开失败，文件校验错误，请检查是否为合法的系统输入文件！\n%s\n%s",isLegal,fileIdentifierText);
+		if (strcmp(isLegal, fileIdentifierText) != 0) {
+			printf("\t\t\t打开失败，文件校验错误，请检查是否为合法的系统输入文件！\n");
 		}
 		else {
 			stuNum = 0;
@@ -470,7 +473,7 @@ void getUserInput() {
 		else
 			break;
 	}
-	while ((ch < '0' || ch > '9') && ch != 'W' && ch != 'R' && ch!= 'w' && ch!= 'r') {
+	while ((ch < '0' || ch > '9') && ch != 'W' && ch != 'R' && ch != 'w' && ch != 'r') {
 		printf("\t\t\t\t输入有误，请重新输入: ");
 		while (1) {
 			scanf("%c", &ch);
