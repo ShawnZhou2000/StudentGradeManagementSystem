@@ -384,13 +384,13 @@ void writeToFile() {
 	system("cls");
 	printf("\t\t\t*************************************************************************\n");
 	printf("\n\n\t\t\t\t\t\tW.  将当前的学生信息写入文件\t\t\t\t\n");
-	FILE* file;										// 文件指针
+	FILE* file = NULL;										// 文件指针
 	char rout[MAX_STRING_LENGTH] = "D:\\test\\";	// 路径名
 	char fileName[MAX_STRING_LENGTH];				// 文件名
 	int isPermitted = 1;							// 判断用户是否允许，默认为1，若用户不允许则变为0
 	printf("\n\t\t\t\t请输入要创建的文件名：");
 	scanf("%s", fileName);
-	file = fopen(strcat(rout, fileName), "w");
+	strcat(rout, fileName);
 	printf("\n\t\t\t\t注意：向%s文件中写入可能会覆盖原有数据，确定这么做吗？\n", rout);
 	// 追加确认，保证数据的安全性
 	printf("\t\t\t\t(键入y允许打开文件，键入其他则取消打开文件):");
@@ -405,16 +405,17 @@ void writeToFile() {
 	if (choice != 'y')
 		isPermitted = 0;
 	if (isPermitted) {
+		file = fopen(rout, "w");
 		fprintf(file, fileIdentifierText);
 		for (int i = 0; i < stuNum; i++) {
 			fprintf(file, "%s %lld %d %d %d\n", stu[i].name, stu[i].stuID, stu[i].chineseScore, stu[i].mathScore, stu[i].englishScore);
 		}
 		printf("\t\t\t\t文件已保存在%s\n", rout);
+		fclose(file);
 	}
 	else {
 		printf("\t\t\t\t用户取消了打开文件操作。\n");
 	}
-	fclose(file);
 	printf("\n\n\n\t\t\t*************************************************************************\n");
 	system("pause");
 }
